@@ -23,8 +23,7 @@ num  target     prot opt source               destination
 3    KUBE-SERVICES  all  --  0.0.0.0/0            0.0.0.0/0            /* kubernetes service portals */
 ```
 
-![Alt text](image-1.png)
-![Alt text](image-2.png)
+![Alt text](image.png)
 
 
 ```
