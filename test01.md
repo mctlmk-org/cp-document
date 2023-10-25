@@ -1,6 +1,13 @@
-## 설치
+# 설치
 
-### 클러스터 준비
+테스트 여부
+| No | Cluster1 | Cluster2 | 확인여부 |
+| :--: | :--: | :--: | :--: |
+|1|NHN|NCP|O| 
+|2|NHN|NHN|O| 
+|3|NHN|KT|X| 
+
+## <span id='1'>1. 클러스터 준비
 | No | Provider | API Server URL | ContextName |Node|
 | :--: | :--: | :--: | :--: | :--: |
 |1|NHN|https://133.186.152.215:6443|ctx-1|2Core 4G 1개|
@@ -9,10 +16,10 @@
 > PodSecurity  설정 Off (/etc/kubernetes/admission-controls/podsecurity.yaml)
 
 
-### MetalLB 설치
+## <span id='2'>2. MetalLB 설치
 > 양쪽 클러스터 모두 설치
 
-#### ARP 설정 변경
+### <span id='2.1'>2.1. ARP 설정 변경
 MetalLB는 ARP프로토콜(OSI Layer 2)을 이용하기 때문에 `kube-proxy` 에서 `strictARP` 설정을 `true` 로 변경해 줘야 한다. 
 - 명령어
 ```bash
@@ -24,7 +31,7 @@ Warning: resource configmaps/kube-proxy is missing the kubectl.kubernetes.io/las
 configmap/kube-proxy configured
 ```
 
-#### MetalLB 설치
+### <span id='2.2'>2.2. MetalLB 설치
 - 명령어
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.7/config/manifests/metallb-native.yaml
@@ -57,7 +64,7 @@ daemonset.apps/speaker created
 validatingwebhookconfiguration.admissionregistration.k8s.io/metallb-webhook-configuration created
 ```
 
-#### LoadBalancer 대역 설정
+### <span id='2.3'>2.3. LoadBalancer 대역 설정
 istioGateway에서 `External IP`로 사용할 LoadBalancer 대역을 설정한다. 
 
 - metallb-config.yaml
@@ -247,7 +254,7 @@ cluster-1     istio-system/istio-remote-secret-cluster-1     synced     istiod-5
 ```
 
 ```bash
-$ kubectl get svc -n istio-system
+$ kubectl get svc -n istio-system --context=ctx-1
 NAME                   TYPE           CLUSTER-IP      EXTERNAL-IP    PORT(S)                                                                                                      AGE
 istio-ingressgateway   LoadBalancer   10.233.16.69    192.168.0.71   15021:30841/TCP,80:32693/TCP,443:31547/TCP,31400:32365/TCP,15443:31599/TCP,15012:30856/TCP,15017:30501/TCP   2m23s
 istiod                 ClusterIP      10.233.31.192   <none>         15010/TCP,15012/TCP,443/TCP,15014/TCP                                                                        2m41s
@@ -276,13 +283,24 @@ $ ./uninstall-istio-mc.sh
 
 ## <span id='4'>4. 샘플 어플리케이션 배포 
 
-## - ctx-2(naver)에 PREROUTING 생성
-```
-ncloud@suslmk-01:~$ sudo iptables -t nat -I PREROUTING -p tcp -d 192.168.0.120 -j DNAT --to-destination 133.186.212.116
-ncloud@suslmk-01:~$ sudo iptables -nL PREROUTING -t nat --line-numbers
-```
+## <span id='4.1'>4.1. ctx-2(naver)에 PREROUTING 생성
+> 라우팅 설정은 각 Node(Master,Worker)에 모두 설정 필요 / Pod가 실행되는 쪽에서 Routing이 걸려서 처리됨.  
 
-## 7.테스트
+- iptables 라우팅 설정  
+-d :: 상대편 Cluster의 Gateway Loadbalancer External IP  
+--to-destination :: 상대편 Cluster의 Gateway Loadbalancer External IP에 설정한 공인IP
+```
+$ sudo iptables -t nat -I PREROUTING -p tcp -d 192.168.0.120 -j DNAT --to-destination 133.186.212.116
+```
+- 라우팅 설정 확인
+```
+$ sudo iptables -nL PREROUTING -t nat --line-numbers
+```
+- 라우팅 삭제(처리용)
+```
+sudo iptables -D PREROUTING {해당Number} -t nat
+```
+## <span id='4.2'>4.2. 샘플 배포
 ```sh
 kubectl --context=ctx-1 create ns sample
 kubectl --context=ctx-2 create ns sample
@@ -471,7 +489,3 @@ Hello version: v1, instance: helloworld-v1-775c565884-mqz7c
 Hello version: v1, instance: helloworld-v1-775c565884-mqz7c
 
 ```
-
-sudo iptables -t nat -I PREROUTING -p tcp -d 192.168.0.120 -j DNAT --to-destination 133.186.212.116
-sudo iptables -nL PREROUTING -t nat --line-numbers
-sudo iptables -D PREROUTING 1 -t nat
