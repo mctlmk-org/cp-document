@@ -490,11 +490,16 @@ Hello version: v1, instance: helloworld-v1-775c565884-mqz7c
 
 ```
 
+<br>
 
-- 성공 Routing
+-------
+| Cluster1 | Cluster2 | 확인여부 |
+| :--: | :--: | :--: |
+|NHN|KT|O| 
 ```sh
 sudo iptables -t nat -I PREROUTING -p tcp -d 192.168.0.240 -j DNAT --to-destination 133.186.135.191
 sudo iptables -t nat -I PREROUTING -p tcp -d 192.168.0.240 --dport 15443 -j DNAT --to-destination 133.186.135.191
 sudo iptables -t nat -I PREROUTING -p tcp -d 192.168.0.240 --dport 15443 -j DNAT --to-destination 133.186.135.191:15443
 ```
+
 
