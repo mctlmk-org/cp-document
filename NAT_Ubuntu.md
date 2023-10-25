@@ -38,7 +38,7 @@ istiod                 ClusterIP      10.233.31.85   <none>        15010/TCP,150
 
 ```
 
-```
+```sh
 ncloud@suslmk-01:~$ kubectl exec -it sleep-8646df57b8-2c87q -n sample sh
 kubectl exec [POD] [COMMAND] is DEPRECATED and will be removed in a future version. Use kubectl exec [POD] -- [COMMAND] instead.
 ~ $ curl helloworld.sample:5000/hello
@@ -47,7 +47,7 @@ Hello version: v2, instance: helloworld-v2-7bd9f44595-8vs9x
 Hello version: v2, instance: helloworld-v2-7bd9f44595-8vs9x
 ```
 
-```
+```sh
 ubuntu@suslmk01:~$ sudo tcpdump -i eth1 host 192.168.0.120
 tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
 listening on eth1, link-type EN10MB (Ethernet), capture size 262144 bytes

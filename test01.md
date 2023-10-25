@@ -479,13 +479,22 @@ ctx-2번에서 실행중인 sleep pod에 접속하여 helloworld.sample:5000으�
 ```sh
 ubuntu@cp-cluster-a-1:~/tmp$ kubectl --context=ctx-2 -n sample exec -it sleep-5cc8999566-g77ws sh
 kubectl exec [POD] [COMMAND] is DEPRECATED and will be removed in a future version. Use kubectl exec [POD] -- [COMMAND] instead.
-~ $ curl helloworld.sleep:5000/hello
+~ $ curl helloworld.sample:5000/hello
 Hello version: v1, instance: helloworld-v1-775c565884-mqz7c
-~ $ curl helloworld.sleep:5000/hello
+~ $ curl helloworld.sample:5000/hello
 Hello version: v2, instance: helloworld-v2-7bb54f8948-rqx2p
-~ $ curl helloworld.sleep:5000/hello
+~ $ curl helloworld.sample:5000/hello
 Hello version: v1, instance: helloworld-v1-775c565884-mqz7c
-~ $ curl helloworld.sleep:5000/hello
+~ $ curl helloworld.sample:5000/hello
 Hello version: v1, instance: helloworld-v1-775c565884-mqz7c
 
 ```
+
+
+- 성공 Routing
+```sh
+sudo iptables -t nat -I PREROUTING -p tcp -d 192.168.0.240 -j DNAT --to-destination 133.186.135.191
+sudo iptables -t nat -I PREROUTING -p tcp -d 192.168.0.240 --dport 15443 -j DNAT --to-destination 133.186.135.191
+sudo iptables -t nat -I PREROUTING -p tcp -d 192.168.0.240 --dport 15443 -j DNAT --to-destination 133.186.135.191:15443
+```
+
