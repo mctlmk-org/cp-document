@@ -503,3 +503,17 @@ sudo iptables -t nat -I PREROUTING -p tcp -d 192.168.0.240 --dport 15443 -j DNAT
 ```
 
 
+
+- KT쪽 15443 트래픽 확인
+```sh
+ubuntu@kt-suslmk:~$ sudo tcpdump -i ens3 port 15443
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+listening on ens3, link-type EN10MB (Ethernet), capture size 262144 bytes
+17:52:10.581033 IP 133.186.228.126.45124 > kt-suslmk.cluster.local.15443: Flags [S], seq 2709065365, win 65280, options [mss 1360,sackOK,TS val 3448515798 ecr 0,nop,wscale 7], length 0
+17:52:10.581121 IP kt-suslmk.cluster.local.15443 > 133.186.228.126.45124: Flags [R.], seq 0, ack 2709065366, win 0, length 0
+17:52:10.584872 IP 133.186.228.126.53617 > kt-suslmk.cluster.local.15443: Flags [S], seq 60644073, win 65280, options [mss 1360,sackOK,TS val 3448515802 ecr 0,nop,wscale 7], length 0
+17:52:10.584903 IP kt-suslmk.cluster.local.15443 > 133.186.228.126.53617: Flags [R.], seq 0, ack 60644074, win 0, length 0
+17:52:10.600877 IP 133.186.228.126.41985 > kt-suslmk.cluster.local.15443: Flags [S], seq 677884041, win 65280, options [mss 1360,sackOK,TS val 3448515818 ecr 0,nop,wscale 7], length 0
+17:52:10.600967 IP kt-suslmk.cluster.local.15443 > 133.186.228.126.41985: Flags [R.], seq 0, ack 677884042, win 0, length 0
+```
+![Alt text](image-1.png)
